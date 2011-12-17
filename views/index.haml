@@ -1,0 +1,28 @@
+!!! 5
+%html{ :lang => "en"}
+  %head
+    %title= "AFN"
+    %link{ :charset => "utf-8", :href => "/assets/application.css", 
+           :media => "screen", :rel => "stylesheet", :type => "text/css" }
+  %body
+    %header
+      %h1 Alone. For Now.
+
+    %section{:id => 'game'}
+      %canvas{:width => '600px', :height => '300px'}
+
+    %section{:id => 'debug'}
+      fps: 
+      %span{:id => 'fps'}
+        n/a
+
+    %section{:id => 'log'}
+      log: <br/>
+      %span
+               
+    -# %footer
+      %p
+        Ludum Dare 22
+
+    %script{:type => "text/javascript", :src  => "assets/application.js"}
+    %script{:type => "text/javascript", :src  => "assets/game.js"}
