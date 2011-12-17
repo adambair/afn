@@ -1,34 +1,30 @@
 var player
 var canvas
-var context
 var fps
-var log
+
 
 function setup() {
   fps     = document.getElementById("fps")
   canvas  = document.getElementsByTagName('canvas')[0]
-  debug   = document.getElementById('log')
-  context = canvas.getContext('2d');
+  setup_player()
 
-  player = new jaws.Sprite({image: "images/player.png", x: canvas.width / 2, y: canvas.height / 2 - 20, context: context})
   jaws.on_keydown("esc", setup)
   jaws.preventDefaultKeys(["up", "down", "left", "right", "space"])
 }
 
 function update() {
-  if(jaws.pressed("left"))  { player.x -= 2 }
-  if(jaws.pressed("right")) { player.x += 2 }
-  if(jaws.pressed("up"))    { player.y -= 2 }
-  if(jaws.pressed("down"))  { player.y += 2 }
+  update_player()
   forceInsideCanvas(player)
 }
 
 function draw() {
   jaws.clear()
   player.draw()
+  draw_fps()
+}
+
+function draw_fps() {
   fps.innerHTML = jaws.game_loop.fps
-  dimensions = canvas.width + " " + canvas.height
-  log.innerHTML = dimensions
 }
 
 function isOutsideCanvas(item) { 
@@ -42,5 +38,27 @@ function forceInsideCanvas(item) {
   if(item.bottom  > canvas.height)  { item.y = canvas.height - item.height }
 }
 
-jaws.assets.add("images/player.png")
+function setup_player() {
+  start_x = 10
+  start_y = 10
+  player = new jaws.Sprite({x:start_x, y:start_y, scale: 1, anchor: "center"})
+  
+  var anim = new jaws.Animation({sprite_sheet: "images/player_sprite.png", orientation: 'right', frame_size: [20,20], frame_duration: 100})
+  player.anim_default = anim.slice(0,1)
+  player.anim_up = anim.slice(1,2)
+  player.anim_right = anim.slice(2,3)
+  player.anim_down = anim.slice(3,4)
+  player.anim_left = anim.slice(4,5)
+  player.setImage( player.anim_default.next() )
+}
+
+function update_player() {
+  player.setImage( player.anim_default.next() )
+  if(jaws.pressed("left"))  { player.x -= 2; player.setImage(player.anim_left.next())}
+  if(jaws.pressed("right")) { player.x += 2; player.setImage(player.anim_right.next())}
+  if(jaws.pressed("up"))    { player.y -= 2; player.setImage(player.anim_up.next()) }
+  if(jaws.pressed("down"))  { player.y += 2; player.setImage(player.anim_down.next()) }
+}
+
+jaws.assets.add("images/player_sprite.png")
 jaws.start()
