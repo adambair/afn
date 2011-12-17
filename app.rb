@@ -5,4 +5,8 @@ class App < Sinatra::Base
   get '/' do
     haml :index
   end
+
+  get '/log' do
+    haml :log
+  end
 end
