@@ -5,7 +5,8 @@ function Example() {
   var viewport
   var tile_map
 
-  /* Called once when a game state is activated. Use it for one-time setup code. */
+  // Called once when a game state is activated. 
+  // Use it for one-time setup code.
   this.setup = function() {
     var block_image = "images/block.png"
     live_info = document.getElementById("live_info")
@@ -28,9 +29,9 @@ function Example() {
     player.move = function() {
       if(this.x < 15){this.x = 15}
       if(this.x > world.width-15){this.x = world.width-15}
+
       this.x += this.vx
       if(tile_map.atRect(player.rect()).length > 0) { this.x -= this.vx }
-      this.vx = 0
 
       this.y += this.vy
       var block = tile_map.atRect(player.rect())[0]
@@ -66,13 +67,27 @@ function Example() {
   this.update = function() {
     player.setImage( player.anim_default.next() )
 
-    player.vx = 0
-    if(jaws.pressed("left"))  { player.vx = -2; player.setImage(player.anim_left.next()) }
-    if(jaws.pressed("right")) { player.vx = 2;  player.setImage(player.anim_right.next()) }
+    if(jaws.pressed("left"))  { if(player.vx > -3){player.vx -= 0.3}; player.setImage(player.anim_left.next()) }
+    if(jaws.pressed("right")) { if(player.vx < 3){player.vx += 0.3};  player.setImage(player.anim_right.next()) }
     if(jaws.pressed("up"))    { if(player.can_jump) { player.vy = -9; player.can_jump = false } }
 
+    if(player.vx > 0) {
+      player.vx -= 0.15
+    }
+    if(player.vx > 0 && player.vx < 0.1){
+      player.vx = 0
+    }
+
+    if(player.vx < 0) {
+      player.vx += 0.15
+    }
+    if(player.vx < 0 && player.vx > -0.1){
+      player.vx = 0
+    }
+
+
     // some gravity
-    player.vy += 0.4
+    if(player.vy > -50){player.vy += 0.4}
 
     // apply vx / vy (x velocity / y velocity), check for collision detection in the process.
     player.move()
@@ -81,16 +96,21 @@ function Example() {
     // It won't go outside of 0 or outside of our previously specified max_x, max_y values.
     viewport.centerAround(player)
 
-    live_info.innerHTML = jaws.game_loop.fps + " fps. Player: " + parseInt(player.x) + "/" + parseInt(player.y) + ". "
-    live_info.innerHTML += "Viewport: " + parseInt(viewport.x) + "/" + parseInt(viewport.y) + "."
-
+    live_info.innerHTML = "Viewport: " + parseInt(viewport.x) + "/" + parseInt(viewport.y) + "."
+    live_info.innerHTML += jaws.game_loop.fps + " fps. Player: " + 
+                          parseInt(player.x) + "/" + 
+                          parseInt(player.y) + ". <br/>" + 
+                          player.vy + "<br/>" + 
+                          player.vx + "<br/>"
   }
 
-  /* Directly after each update draw() will be called. Put all your on-screen operations here. */
+  // Directly after each update draw() will be called. 
+  // Put all your on-screen operations here.
   this.draw = function() {
     jaws.clear()
-
-    // the viewport magic. wrap all draw()-calls inside viewport.apply and it will draw those relative to the viewport.
+    // the viewport magic. 
+    // wrap all draw()-calls inside viewport.apply 
+    // and it will draw those relative to the viewport.
     viewport.apply( function() {
       blocks.draw()
       player.draw()
@@ -101,5 +121,7 @@ function Example() {
 jaws.onload = function() {
   jaws.unpack()
   jaws.assets.add(["images/droid_11x15.png","images/block.png"])
-  jaws.start(Example)  // Our convenience function jaws.start() will load assets, call setup and loop update/draw in 60 FPS
+  jaws.start(Example)  
+  // Our convenience function jaws.start() will load assets, 
+  // call setup and loop update/draw in 60 FPS
 }
