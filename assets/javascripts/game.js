@@ -1,3 +1,9 @@
+jaws.TileMap.prototype.rm = function(obj) {
+  var col = parseInt(obj.x / this.cell_size[0])
+  var row = parseInt(obj.y / this.cell_size[1])
+  return this.cells[col][row] = []
+}
+
 function Example() {
   var player
   var blocks
@@ -8,8 +14,9 @@ function Example() {
   // Called once when a game state is activated. 
   // Use it for one-time setup code.
   this.setup = function() {
-    var block_image = "images/block.png"
     live_info = document.getElementById("live_info")
+
+    var block_image = "images/block.png"
     blocks = new jaws.SpriteList()
 
     var world = new jaws.Rect(0,0,320*2,320*2)
@@ -19,6 +26,9 @@ function Example() {
         blocks.push( new Sprite({image: block_image, x: x, y: y}) )
       }
     }
+
+    blocks.push( new Sprite({image: block_image, x: 64, y: world.height / 1.5 - 10}) )
+    blocks.push( new Sprite({image: block_image, x: 64, y: world.height / 1.5 - 26}) )
 
     // Later on we can look them up really fast (see player.move)
     tile_map = new jaws.TileMap({size: [200,200], cell_size: [16,16]})
@@ -50,7 +60,6 @@ function Example() {
         }
         this.vy = 0
       }
-
     }
 
     player.friction = function() {
@@ -74,6 +83,19 @@ function Example() {
     }
 
     player.chop = function() {
+      if(jaws.pressed('down')){
+        block = tile_map.at(player.x, player.y+1)
+        if(block[0] != undefined){
+          tile_map.rm(block[0])
+          blocks[block[0]] = ""
+        }
+      } else if(jaws.pressed('left')){
+        jaws.log(tile_map.at(player.x-15, player.y))
+      } else if(jaws.pressed('right')){
+        jaws.log(tile_map.at(player.x+15, player.y))
+      } else {
+        jaws.log("")
+      }
     }
 
     var anim = new jaws.Animation({sprite_sheet: "images/droid_11x15.png", frame_size: [11,15], frame_duration: 100})
