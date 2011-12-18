@@ -4,6 +4,18 @@ jaws.TileMap.prototype.rm = function(obj) {
   return this.cells[col][row] = []
 }
 
+jaws.Sprite.prototype.init_life = function() {
+  this.alive = true
+}
+
+jaws.Sprite.prototype.is_alive = function() {
+  this.alive
+}
+
+jaws.Sprite.prototype.kill = function() {
+  this.alive = false
+}
+
 function Example() {
   var player
   var blocks
@@ -35,7 +47,7 @@ function Example() {
     tile_map.push(blocks)
 
     viewport = new jaws.Viewport({max_x: world.width, max_y: world.height})
-    player = new jaws.Sprite({x:world.width/2, y:world.height/1.5, scale: 2, anchor: "center_bottom"})
+    player = new jaws.Sprite({x:world.width/2, y:world.height/1.5, scale: 1, anchor: "center_bottom"})
 
     player.move = function() {
       player.friction()
@@ -87,12 +99,30 @@ function Example() {
         block = tile_map.at(player.x, player.y+1)
         if(block[0] != undefined){
           tile_map.rm(block[0])
-          blocks[block[0]] = ""
+          block[0].x = -5
+          block[0].y = -5
+        }
+      } else if(jaws.pressed('up')){
+        block = tile_map.at(player.x, player.y-20)
+        if(block[0] != undefined){
+          tile_map.rm(block[0])
+          block[0].x = -5
+          block[0].y = -5
         }
       } else if(jaws.pressed('left')){
-        jaws.log(tile_map.at(player.x-15, player.y))
+        block = tile_map.at(player.x-15, player.y)
+        if(block[0] != undefined){
+          tile_map.rm(block[0])
+          block[0].x = -5
+          block[0].y = -5
+        }
       } else if(jaws.pressed('right')){
-        jaws.log(tile_map.at(player.x+15, player.y))
+        block = tile_map.at(player.x+15, player.y)
+        if(block[0] != undefined){
+          tile_map.rm(block[0])
+          block[0].x = -5
+          block[0].y = -5
+        }
       } else {
         jaws.log("")
       }
