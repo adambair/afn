@@ -27,6 +27,8 @@ function Example() {
     player = new jaws.Sprite({x:110, y:320, scale: 2, anchor: "center_bottom"})
 
     player.move = function() {
+      player.friction()
+      player.gravity()
       if(this.x < 15){this.x = 15}
       if(this.x > world.width-15){this.x = world.width-15}
 
@@ -47,6 +49,27 @@ function Example() {
         }
         this.vy = 0
       }
+
+    }
+
+    player.friction = function() {
+      if(this.vx > 0) {
+        this.vx -= 0.15
+      }
+      if(this.vx > 0 && this.vx < 0.1){
+        this.vx = 0
+      }
+
+      if(this.vx < 0) {
+        this.vx += 0.15
+      }
+      if(this.vx < 0 && this.vx > -0.1){
+        this.vx = 0
+      }
+    }
+
+    player.gravity = function() {
+      if(this.vy > -50){this.vy += 0.4}
     }
 
     var anim = new jaws.Animation({sprite_sheet: "images/droid_11x15.png", frame_size: [11,15], frame_duration: 100})
@@ -70,24 +93,9 @@ function Example() {
     if(jaws.pressed("left"))  { if(player.vx > -3){player.vx -= 0.3}; player.setImage(player.anim_left.next()) }
     if(jaws.pressed("right")) { if(player.vx < 3){player.vx += 0.3};  player.setImage(player.anim_right.next()) }
     if(jaws.pressed("up"))    { if(player.can_jump) { player.vy = -9; player.can_jump = false } }
-
-    if(player.vx > 0) {
-      player.vx -= 0.15
+    if(jaws.pressed("space")) {
+      if(player.can_jump) { player.vy = -9; player.can_jump = false } 
     }
-    if(player.vx > 0 && player.vx < 0.1){
-      player.vx = 0
-    }
-
-    if(player.vx < 0) {
-      player.vx += 0.15
-    }
-    if(player.vx < 0 && player.vx > -0.1){
-      player.vx = 0
-    }
-
-
-    // some gravity
-    if(player.vy > -50){player.vy += 0.4}
 
     // apply vx / vy (x velocity / y velocity), check for collision detection in the process.
     player.move()
@@ -96,6 +104,7 @@ function Example() {
     // It won't go outside of 0 or outside of our previously specified max_x, max_y values.
     viewport.centerAround(player)
 
+    // debugging
     live_info.innerHTML = "Viewport: " + parseInt(viewport.x) + "/" + parseInt(viewport.y) + "."
     live_info.innerHTML += jaws.game_loop.fps + " fps. Player: " + 
                           parseInt(player.x) + "/" + 
