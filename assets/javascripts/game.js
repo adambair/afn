@@ -15,8 +15,9 @@ function Example() {
     var world = new jaws.Rect(0,0,320*2,320*2)
     
     for(var x = 0; x < world.width; x += 16 ) {
-      y = world.height-16
-      blocks.push( new Sprite({image: block_image, x: x, y: y}) )
+      for(var y = world.height-16; y > world.height / 1.5; y -= 16){
+        blocks.push( new Sprite({image: block_image, x: x, y: y}) )
+      }
     }
 
     // Later on we can look them up really fast (see player.move)
@@ -24,7 +25,7 @@ function Example() {
     tile_map.push(blocks)
 
     viewport = new jaws.Viewport({max_x: world.width, max_y: world.height})
-    player = new jaws.Sprite({x:110, y:320, scale: 2, anchor: "center_bottom"})
+    player = new jaws.Sprite({x:world.width/2, y:world.height/1.5, scale: 2, anchor: "center_bottom"})
 
     player.move = function() {
       player.friction()
@@ -72,6 +73,9 @@ function Example() {
       if(this.vy > -50){this.vy += 0.4}
     }
 
+    player.chop = function() {
+    }
+
     var anim = new jaws.Animation({sprite_sheet: "images/droid_11x15.png", frame_size: [11,15], frame_duration: 100})
     player.anim_default = anim.slice(0,5)
     player.anim_up = anim.slice(6,8)
@@ -94,7 +98,7 @@ function Example() {
     if(jaws.pressed("right")) { if(player.vx < 3){player.vx += 0.3};  player.setImage(player.anim_right.next()) }
     if(jaws.pressed("up"))    { if(player.can_jump) { player.vy = -9; player.can_jump = false } }
     if(jaws.pressed("space")) {
-      if(player.can_jump) { player.vy = -9; player.can_jump = false } 
+      player.chop()
     }
 
     // apply vx / vy (x velocity / y velocity), check for collision detection in the process.
@@ -105,12 +109,12 @@ function Example() {
     viewport.centerAround(player)
 
     // debugging
-    live_info.innerHTML = "Viewport: " + parseInt(viewport.x) + "/" + parseInt(viewport.y) + "."
+    live_info.innerHTML = "Viewport: " + parseInt(viewport.x) + "/" + parseInt(viewport.y) + ". "
     live_info.innerHTML += jaws.game_loop.fps + " fps. Player: " + 
                           parseInt(player.x) + "/" + 
                           parseInt(player.y) + ". <br/>" + 
-                          player.vy + "<br/>" + 
-                          player.vx + "<br/>"
+                          "vy: " + player.vy + "<br/>" + 
+                          "vx: " + player.vx + "<br/>"
   }
 
   // Directly after each update draw() will be called. 
