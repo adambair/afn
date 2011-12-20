@@ -54,6 +54,7 @@ function Example() {
       player.gravity()
       if(this.x < 15){this.x = 15}
       if(this.x > world.width-15){this.x = world.width-15}
+      if(this.y > world.height){this.y = 0}
 
       this.x += this.vx
       if(tile_map.atRect(player.rect()).length > 0) { this.x -= this.vx }
