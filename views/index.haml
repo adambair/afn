@@ -8,15 +8,19 @@
     %header
       %h1 Alone. For Now.
 
+    %section{:id => 'debug'}
+      %p
+        <b>move</b>: arrows<br />
+        <b>dig</b>: space+arrow</br>
+
     %section{:id => 'game'}
       %canvas{:width => '600px', :height => '300px'}
-
 
     %section{:id => 'debug'}
       #live_info
         n/a
 
-    %section{:id => 'log'}
+    -# %section{:id => 'log'}
       %div{:id => "jaws-log"}
                
     -# %footer
